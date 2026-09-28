@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch('http://localhost:3000/api/enroll', {
+                const response = await fetch('/api/enroll', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 console.error("Connection Error:", error);
-                alert("❌ Connection failed. Ensure your server is running on port 3000.");
+                alert("❌ Could not reach the enrollment service. Please try again later.");
             } finally {
                 submitBtn.innerText = originalText;
                 submitBtn.disabled = false;
