@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Roadmap | Recursive Coders</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* --- INTERNAL CSS START --- */
+        :root {
+            --primary: #6c63ff; 
+            --dark: #333;
+            --light: #fff;
+        }
+
+        /* 1. NAVIGATION & MOBILE MENU */
+        header {
+            background: rgba(255, 255, 255, 0.98);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo img {
+          width: 400px;
+          max-width: 100%;
+         height: auto;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            border-radius: 50px; 
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white !important;
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary) !important;
+            border: 2px solid var(--primary);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.2);
+        }
+
+        .menu-btn {
+            display: none;
+            font-size: 1.8rem;
+            color: var(--dark);
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* ROADMAP CONTAINER ADJUSTMENT */
+        .roadmap-container {
+            position: relative;
+            padding-bottom: 20px;
+        }
+        
+        /* Make sure the line doesn't go all the way into projects */
+        .road-line {
+            height: calc(100% - 350px) !important; /* Stop line before projects */
+            min-height: 800px;
+        }
+
+        /* MOBILE LAYOUT */
+        @media (max-width: 768px) {
+            .menu-btn { display: block; }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transition: 0.3s ease-in-out;
+                z-index: 999;
+                gap: 30px;
+            }
+
+            .nav-links.active { right: 0; }
+
+            .nav-links li { width: 100%; text-align: center; }
+
+            .nav-links .btn {
+                width: 80%;
+                padding: 15px 0;
+                font-size: 1.1rem;
+                border-radius: 12px;
+                display: block;
+                margin: 0 auto;
+            }
+        }
+
+        /* 2. PROJECTS SCROLLING SECTION */
+        .projects-section {
+            padding: 40px 0;
+            overflow: hidden;
+            background: #f9f9f9;
+            margin-top: 30px;
+            border-top: 1px dashed #ddd;
+            border-bottom: 1px dashed #ddd;
+            width: 100%;
+            position: relative;
+            z-index: 5; /* Ensure it sits above road line if overlaps */
+        }
+
+        .projects-section h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--dark);
+            font-size: 1.8rem;
+        }
+
+        .project-scroll-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+
+        .project-track {
+            display: flex;
+            gap: 20px;
+            width: max-content; 
+            animation: scrollProjects 30s linear infinite; 
+            padding: 10px 0;
+        }
+
+        .project-track:hover, .project-track:active {
+            animation-play-state: paused; 
+        }
+
+        .project-card {
+            background: white;
+            width: 280px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            flex-shrink: 0; 
+            border: 1px solid #eee;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .project-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .project-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: #444;
+        }
+
+        .project-card p {
+            font-size: 0.9rem;
+            color: #777;
+            line-height: 1.4;
+        }
+
+        @keyframes scrollProjects {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); } 
+        }
+
+        @media (max-width: 768px) {
+            .project-card { width: 240px; padding: 18px; }
+            .project-card i { font-size: 2.2rem; }
+            .project-card h4 { font-size: 1.1rem; }
+        }
+
+        @media (max-width: 480px) {
+            .projects-section h2 { font-size: 1.4rem; }
+            .project-track { gap: 15px; }
+            .project-card { width: 200px; padding: 15px; border-radius: 12px; }
+            .project-card i { font-size: 1.8rem; }
+            .project-card h4 { font-size: 0.95rem; }
+            .project-card p { font-size: 0.8rem; }
+        }
+        /* --- INTERNAL CSS END --- */
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <img src="assets/LOGO (3).png" alt="Recursive Coders" style="max-height:60px; display:block; margin:0 auto;">
+                </div>
+                
+                <div class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></div>
+
+                <ul class="nav-links" id="navLinks">
+                    <li><button class="btn btn-outline" onclick="resetView(); closeMobileMenu();">All Courses</button></li>
+                    <li><a href="index.html" class="btn btn-primary" onclick="closeMobileMenu();">Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="text-align:center; padding: 60px 0;">
+        <h1 id="pageTitle" style="font-size:2.5rem; color:var(--dark);">Select Your Path</h1>
+        <p id="pageSub" style="color:var(--text-light);">Choose a technology to view the detailed 6-month curriculum.</p>
+    </div>
+
+    <div class="container" id="selectionGrid">
+        <div class="courses-grid">
+            <div class="course-card" onclick="showRoadmap('java')" style="cursor:pointer; text-align:center; padding:30px;">
+                <div class="card-icon" style="margin:0 auto 20px;"><i class="fab fa-java"></i></div>
+                <h3>Java Full Stack</h3>
+                <p>6 Months • Placement Assured</p>
+            </div>
+            <div class="course-card" onclick="showRoadmap('python')" style="cursor:pointer; text-align:center; padding:30px;">
+                <div class="card-icon" style="margin:0 auto 20px;"><i class="fab fa-python"></i></div>
+                <h3>Python Full Stack</h3>
+                <p>6 Months • Job Ready</p>
+            </div>
+            <div class="course-card" onclick="showRoadmap('mern')" style="cursor:pointer; text-align:center; padding:30px;">
+                <div class="card-icon" style="margin:0 auto 20px;"><i class="fab fa-react"></i></div>
+                <h3>MERN Stack</h3>
+                <p>6 Months • Modern Web</p>
+            </div>
+            <div class="course-card" onclick="showRoadmap('data')" style="cursor:pointer; text-align:center; padding:30px;">
+                <div class="card-icon" style="margin:0 auto 20px;"><i class="fas fa-chart-line"></i></div>
+                <h3>Data Science</h3>
+                <p>6 Months • Analytical Skills</p>
+            </div>
+            <div class="course-card" onclick="showRoadmap('aiml')" style="cursor:pointer; text-align:center; padding:30px;">
+                <div class="card-icon" style="margin:0 auto 20px;"><i class="fas fa-brain"></i></div>
+                <h3>AI & Machine Learning</h3>
+                <p>6 Months • Future Tech</p>
+            </div>
+            <div class="course-card" onclick="showRoadmap('automation')" style="cursor:pointer; text-align:center; padding:30px;">
+                <div class="card-icon" style="margin:0 auto 20px;"><i class="fas fa-vial"></i></div>
+                <h3>Automation Testing</h3>
+                <p>6 Months • SDET Career</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="java" class="roadmap-container hidden">
+        <div class="road-line"></div>
+        <div class="scrolling-character" id="java-boy"><img src="https://cdn-icons-png.flaticon.com/512/3048/3048122.png"></div>
+        
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 1: Core Java & Logic</h3>
+                <p>Fundamentals of OOPs, Exception Handling, Collections Framework.</p>
+                <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 2: Database & SQL</h3>
+                <p>MySQL & Oracle. Joins, normalization, stored procedures.</p>
+                <img src="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 3: Advanced Java</h3>
+                <p>Java EE (Servlets, JSP) & Hibernate ORM.</p>
+                <img src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 4: Spring Boot</h3>
+                <p>REST APIs, Microservices, Spring Security.</p>
+                <img src="https://images.unsplash.com/photo-1605379399642-870262d3d051?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 5: React Frontend</h3>
+                <p>Integrating Java Backend with React.js.</p>
+                <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 6: Deployment</h3>
+                <p>AWS Cloud, Docker, Jenkins CI/CD.</p>
+                <img src="https://images.unsplash.com/photo-1605745341117-9575522cd5e5?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+
+        <div class="projects-section">
+            <h2>Live Projects You Will Build</h2>
+            <div class="project-scroll-container">
+                <div class="project-track">
+                    <div class="project-card">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h4>E-Commerce Platform</h4>
+                        <p>Full-featured Amazon clone with Cart & Payment Gateway.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-university"></i>
+                        <h4>Smart Banking System</h4>
+                        <p>Secure transaction portal with Spring Security & JWT.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-hospital-user"></i>
+                        <h4>Hospital Management</h4>
+                        <p>Patient records & doctor booking system.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-plane-departure"></i>
+                        <h4>Flight Booking API</h4>
+                        <p>Microservices based airline reservation backend.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h4>E-Commerce Platform</h4>
+                        <p>Full-featured Amazon clone with Cart & Payment Gateway.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-university"></i>
+                        <h4>Smart Banking System</h4>
+                        <p>Secure transaction portal with Spring Security & JWT.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-hospital-user"></i>
+                        <h4>Hospital Management</h4>
+                        <p>Patient records & doctor booking system.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-plane-departure"></i>
+                        <h4>Flight Booking API</h4>
+                        <p>Microservices based airline reservation backend.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:50px; position:relative; z-index:10; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="openEnrollForm('Java Full Stack')">Enroll in Java Course</button>
+            <button class="btn btn-outline" onclick="openBrochureForm('Java Full Stack')">Download Brochure</button>
+        </div>
+    </div>
+
+    <div id="python" class="roadmap-container hidden">
+        <div class="road-line"></div>
+        <div class="scrolling-character" id="python-boy"><img src="https://cdn-icons-png.flaticon.com/512/3048/3048122.png"></div>
+        
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 1: Python Core</h3>
+                <p>Syntax, OOPs, File Handling, Logic Building.</p>
+                <img src="https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 2: Advanced DB</h3>
+                <p>PostgreSQL, Complex Queries, Database Design.</p>
+                <img src="https://images.unsplash.com/photo-1556155092-490a1ba16284?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 3: Django Framework</h3>
+                <p>MVT Architecture, Admin Panel, ORM.</p>
+                <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 4: REST APIs</h3>
+                <p>Django REST Framework, JWT Authentication.</p>
+                <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 5: React Integration</h3>
+                <p>Connecting Python Backend with Frontend.</p>
+                <img src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 6: Deploy</h3>
+                <p>AWS, Heroku, Redis Caching, Celery.</p>
+                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+
+        <div class="projects-section">
+            <h2>Live Projects You Will Build</h2>
+            <div class="project-scroll-container">
+                <div class="project-track">
+                    <div class="project-card">
+                        <i class="fas fa-hamburger"></i>
+                        <h4>Food Delivery Backend</h4>
+                        <p>Swiggy-like backend with Django & Geolocation.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-blog"></i>
+                        <h4>CMS Blog Platform</h4>
+                        <p>Advanced blogging site with rich text editor.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-tasks"></i>
+                        <h4>Task Automation Bot</h4>
+                        <p>Automate emails and reports using Python scripts.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-video"></i>
+                        <h4>Video Streaming Service</h4>
+                        <p>Netflix-style streaming logic with Python.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-hamburger"></i>
+                        <h4>Food Delivery Backend</h4>
+                        <p>Swiggy-like backend with Django & Geolocation.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-blog"></i>
+                        <h4>CMS Blog Platform</h4>
+                        <p>Advanced blogging site with rich text editor.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-tasks"></i>
+                        <h4>Task Automation Bot</h4>
+                        <p>Automate emails and reports using Python scripts.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-video"></i>
+                        <h4>Video Streaming Service</h4>
+                        <p>Netflix-style streaming logic with Python.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:50px; position:relative; z-index:10; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="openEnrollForm('Python Full Stack')">Enroll in Python Course</button>
+            <button class="btn btn-outline" onclick="openBrochureForm('Python Full Stack')">Download Brochure</button>
+        </div>
+    </div>
+
+    <div id="mern" class="roadmap-container hidden">
+        <div class="road-line"></div>
+        <div class="scrolling-character" id="mern-boy"><img src="https://cdn-icons-png.flaticon.com/512/3048/3048122.png"></div>
+        
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 1: JS Mastery</h3>
+                <p>ES6+, Async/Await, DOM, Event Loop.</p>
+                <img src="https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 2: React Core</h3>
+                <p>Hooks, Components, SPA Architecture.</p>
+                <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 3: Redux Toolkit</h3>
+                <p>Global State Management for large apps.</p>
+                <img src="https://images.unsplash.com/photo-1581276879432-15e50529f34b?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 4: Node & Express</h3>
+                <p>Backend API development, Middleware.</p>
+                <img src="https://images.unsplash.com/photo-1599507593499-a3f7d7d97663?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 5: MongoDB</h3>
+                <p>NoSQL design, Aggregations, Mongoose.</p>
+                <img src="https://images.unsplash.com/photo-1569748130764-3fed0c102c59?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 6: Full Stack</h3>
+                <p>Real-time features, Payment Gateway, Deployment.</p>
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+
+        <div class="projects-section">
+            <h2>Live Projects You Will Build</h2>
+            <div class="project-scroll-container">
+                <div class="project-track">
+                    <div class="project-card">
+                        <i class="fas fa-ticket-alt"></i>
+                        <h4>BookMyShow Clone</h4>
+                        <p>Movie ticket booking system with seat selection.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fab fa-instagram"></i>
+                        <h4>Social Media App</h4>
+                        <p>Instagram clone with posts, likes, and comments.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-comments"></i>
+                        <h4>Real-Time Chat App</h4>
+                        <p>Live messaging using Socket.io and React.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-shopping-bag"></i>
+                        <h4>E-Commerce Store</h4>
+                        <p>Full-stack shop with Admin Dashboard.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-ticket-alt"></i>
+                        <h4>BookMyShow Clone</h4>
+                        <p>Movie ticket booking system with seat selection.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fab fa-instagram"></i>
+                        <h4>Social Media App</h4>
+                        <p>Instagram clone with posts, likes, and comments.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-comments"></i>
+                        <h4>Real-Time Chat App</h4>
+                        <p>Live messaging using Socket.io and React.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-shopping-bag"></i>
+                        <h4>E-Commerce Store</h4>
+                        <p>Full-stack shop with Admin Dashboard.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:50px; position:relative; z-index:10; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="openEnrollForm('MERN Stack')">Enroll in MERN Course</button>
+            <button class="btn btn-outline" onclick="openBrochureForm('MERN Stack')">Download Brochure</button>
+        </div>
+    </div>
+
+    <div id="data" class="roadmap-container hidden">
+        <div class="road-line"></div>
+        <div class="scrolling-character" id="data-boy"><img src="https://cdn-icons-png.flaticon.com/512/3048/3048122.png"></div>
+        
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 1: Python for Data</h3>
+                <p>NumPy, Pandas, Data Cleaning.</p>
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 2: Statistics</h3>
+                <p>Probability, Hypothesis Testing, Algebra.</p>
+                <img src="https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 3: Visualization</h3>
+                <p>Matplotlib, Seaborn, PowerBI.</p>
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 4: Advanced SQL</h3>
+                <p>Window functions, ETL Pipelines.</p>
+                <img src="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 5: Machine Learning</h3>
+                <p>Regression, Classification, Scikit-Learn.</p>
+                <img src="https://images.unsplash.com/photo-1527474305487-b87b222841cc?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 6: Capstone</h3>
+                <p>End-to-End Data Solution Project.</p>
+                <img src="https://images.unsplash.com/photo-1543286386-2e659306cd6c?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+
+        <div class="projects-section">
+            <h2>Live Projects You Will Build</h2>
+            <div class="project-scroll-container">
+                <div class="project-track">
+                    <div class="project-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Stock Market Predictor</h4>
+                        <p>Predicting stock trends using Time Series Analysis.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-credit-card"></i>
+                        <h4>Fraud Detection System</h4>
+                        <p>Detecting credit card fraud using Classification.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-film"></i>
+                        <h4>Movie Recommender</h4>
+                        <p>Netflix-style recommendation engine.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-user-friends"></i>
+                        <h4>Customer Churn Analysis</h4>
+                        <p>Predicting customer dropout for telecom.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Stock Market Predictor</h4>
+                        <p>Predicting stock trends using Time Series Analysis.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-credit-card"></i>
+                        <h4>Fraud Detection System</h4>
+                        <p>Detecting credit card fraud using Classification.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-film"></i>
+                        <h4>Movie Recommender</h4>
+                        <p>Netflix-style recommendation engine.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-user-friends"></i>
+                        <h4>Customer Churn Analysis</h4>
+                        <p>Predicting customer dropout for telecom.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:50px; position:relative; z-index:10; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="openEnrollForm('Data Science')">Enroll in Data Science</button>
+            <button class="btn btn-outline" onclick="openBrochureForm('Data Science')">Download Brochure</button>
+        </div>
+    </div>
+
+    <div id="aiml" class="roadmap-container hidden">
+        <div class="road-line"></div>
+        <div class="scrolling-character" id="aiml-boy"><img src="https://cdn-icons-png.flaticon.com/512/3048/3048122.png"></div>
+        
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 1: Math Foundations</h3>
+                <p>Calculus, Linear Algebra, Probability.</p>
+                <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 2: Supervised ML</h3>
+                <p>Regression, Decision Trees, SVM.</p>
+                <img src="https://images.unsplash.com/photo-1555255707-c07966088b7b?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 3: Unsupervised ML</h3>
+                <p>Clustering, K-Means, PCA.</p>
+                <img src="https://images.unsplash.com/photo-1516110833967-0b5716ca1387?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 4: Deep Learning</h3>
+                <p>Neural Networks, TensorFlow, Keras.</p>
+                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 5: NLP & Vision</h3>
+                <p>Computer Vision (OpenCV), NLP (RNN/LSTM).</p>
+                <img src="https://images.unsplash.com/photo-1527430253228-e93688616381?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 6: MLOps</h3>
+                <p>Model Deployment, Docker, Monitoring.</p>
+                <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+
+        <div class="projects-section">
+            <h2>Live Projects You Will Build</h2>
+            <div class="project-scroll-container">
+                <div class="project-track">
+                    <div class="project-card">
+                        <i class="fas fa-id-card"></i>
+                        <h4>Face Recognition</h4>
+                        <p>Attendance system using Face Recognition & OpenCV.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-robot"></i>
+                        <h4>AI Chatbot</h4>
+                        <p>Intelligent customer support bot using NLP.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-car-crash"></i>
+                        <h4>Self-Driving Simulation</h4>
+                        <p>Lane detection system using Computer Vision.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-heartbeat"></i>
+                        <h4>Disease Prediction</h4>
+                        <p>AI model to predict diseases from medical records.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-id-card"></i>
+                        <h4>Face Recognition</h4>
+                        <p>Attendance system using Face Recognition & OpenCV.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-robot"></i>
+                        <h4>AI Chatbot</h4>
+                        <p>Intelligent customer support bot using NLP.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-car-crash"></i>
+                        <h4>Self-Driving Simulation</h4>
+                        <p>Lane detection system using Computer Vision.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-heartbeat"></i>
+                        <h4>Disease Prediction</h4>
+                        <p>AI model to predict diseases from medical records.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:50px; position:relative; z-index:10; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="openEnrollForm('AI & ML')">Enroll in AI & ML</button>
+            <button class="btn btn-outline" onclick="openBrochureForm('AI & ML')">Download Brochure</button>
+        </div>
+    </div>
+
+    <div id="automation" class="roadmap-container hidden">
+        <div class="road-line"></div>
+        <div class="scrolling-character" id="automation-boy"><img src="https://cdn-icons-png.flaticon.com/512/3048/3048122.png"></div>
+        
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 1: Java Core</h3>
+                <p>Java logic, OOPs concepts for testing.</p>
+                <img src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 2: Selenium</h3>
+                <p>WebDriver, Locators, Browser Automation.</p>
+                <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 3: Frameworks</h3>
+                <p>TestNG, POM, Data-Driven Testing.</p>
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 4: API Testing</h3>
+                <p>RestAssured, Postman, Status codes.</p>
+                <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step left">
+            <div class="step-content">
+                <h3>Month 5: DevOps & BDD</h3>
+                <p>Jenkins, Cucumber, Gherkin syntax.</p>
+                <img src="https://images.unsplash.com/photo-1607799275518-d58665d099db?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+        <div class="roadmap-step right">
+            <div class="step-content">
+                <h3>Month 6: Mobile Testing</h3>
+                <p>Appium, Real Device Cloud Testing.</p>
+                <img src="https://images.unsplash.com/photo-1526498460520-4c246339dccb?w=400" style="width:100%; border-radius:10px;">
+            </div>
+        </div>
+
+        <div class="projects-section">
+            <h2>Live Projects You Will Build</h2>
+            <div class="project-scroll-container">
+                <div class="project-track">
+                    <div class="project-card">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h4>E-Commerce Test Suite</h4>
+                        <p>End-to-end automation of an Amazon-like site.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-server"></i>
+                        <h4>API Testing Framework</h4>
+                        <p>Automating REST APIs for a banking app.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h4>Mobile App Automation</h4>
+                        <p>Testing Android/iOS apps using Appium.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-bug"></i>
+                        <h4>Bug Tracking System</h4>
+                        <p>Integrated Jira-like tool for defect lifecycle.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h4>E-Commerce Test Suite</h4>
+                        <p>End-to-end automation of an Amazon-like site.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-server"></i>
+                        <h4>API Testing Framework</h4>
+                        <p>Automating REST APIs for a banking app.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h4>Mobile App Automation</h4>
+                        <p>Testing Android/iOS apps using Appium.</p>
+                    </div>
+                    <div class="project-card">
+                        <i class="fas fa-bug"></i>
+                        <h4>Bug Tracking System</h4>
+                        <p>Integrated Jira-like tool for defect lifecycle.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:50px; position:relative; z-index:10; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="openEnrollForm('Automation Testing')">Enroll in Automation</button>
+            <button class="btn btn-outline" onclick="openBrochureForm('Automation Testing')">Download Brochure</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="enrollModal">
+        <div class="modal-container">
+            <span class="close-modal-btn" onclick="closeEnrollForm()">&times;</span>
+            
+            <h2>Secure Your Spot</h2>
+            
+            <form id="enrollFormPopup">
+                <input type="hidden" id="popup-course-name">
+
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="popup-name" required placeholder="Enter your full name">
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="popup-phone" required placeholder="+91 98765 43210">
+                </div>
+
+                <div class="form-group">
+                    <label>College / Company</label>
+                    <input type="text" id="popup-college" required placeholder="Where do you study/work?">
+                </div>
+
+                <div class="form-group">
+                    <label>Highest Qualification</label>
+                    <select id="popup-degree" required>
+                        <option value="" disabled selected>Select Degree</option>
+                        <option value="B.Tech/B.E">B.Tech / B.E</option>
+                        <option value="BCA/MCA">BCA / MCA</option>
+                        <option value="B.Sc/M.Sc">B.Sc / M.Sc</option>
+                        <option value="Working Professional">Working Professional</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Year of Passing</label>
+                    <input type="number" id="popup-yop" required placeholder="e.g. 2024">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Confirm Enrollment</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="brochureModal">
+        <div class="modal-container">
+            <span class="close-modal-btn" onclick="closeBrochureForm()">&times;</span>
+            
+            <h2>Download Course Brochure</h2>
+            <p style="text-align: center; font-size: 0.9rem; margin-bottom: 20px; color: #666;">Enter your details to receive the <span id="brochure-course-name" style="font-weight: bold; color: var(--primary);"></span> syllabus instantly.</p>
+            
+            <form id="brochureForm">
+                <input type="hidden" id="brochure-hidden-course">
+
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="b-name" required placeholder="Enter your full name">
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="b-email" required placeholder="Where should we send it?">
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="b-phone" required placeholder="+91 98765 43210">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Download Now <i class="fas fa-download"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- MENU LOGIC ---
+        const menuBtn = document.getElementById('menuBtn');
+        const navLinks = document.getElementById('navLinks');
+        
+        function closeMobileMenu() {
+            if (navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+                const icon = menuBtn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        if(menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                
+                const icon = menuBtn.querySelector('i');
+                if (navLinks.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        }
+
+        // --- ROADMAP & AVATAR LOGIC (UPDATED) ---
+        let currentCourseId = null;
+
+        function showRoadmap(courseId) {
+            document.getElementById('selectionGrid').style.display = 'none';
+            document.getElementById('pageTitle').innerText = courseId.toUpperCase() + " JOURNEY (6 Months)";
+            document.querySelectorAll('.roadmap-container').forEach(el => el.classList.add('hidden'));
+            
+            const container = document.getElementById(courseId);
+            if(container) {
+                container.classList.remove('hidden');
+                currentCourseId = courseId;
+                window.addEventListener('scroll', scrollAnimation);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetView() {
+            document.getElementById('selectionGrid').style.display = 'block';
+            document.getElementById('pageTitle').innerText = "Select Your Path";
+            document.querySelectorAll('.roadmap-container').forEach(el => el.classList.add('hidden'));
+            window.removeEventListener('scroll', scrollAnimation);
+            currentCourseId = null;
+        }
+
+        function scrollAnimation() {
+            if (!currentCourseId) return;
+            const container = document.getElementById(currentCourseId);
+            const boy = document.getElementById(currentCourseId + '-boy');
+            
+            // 1. Get the visual boundary (The last roadmap step: Month 6)
+            // We select all steps in this specific container
+            const steps = container.querySelectorAll('.roadmap-step');
+            const lastStep = steps[steps.length - 1]; // The "Month 6" step
+            
+            if(!lastStep) return;
+
+            // 2. Calculate the limit (Bottom of the last step)
+            // We stop at the middle of the last card so it looks centered
+            const stopLimit = lastStep.offsetTop + (lastStep.offsetHeight / 2); 
+
+            const rect = container.getBoundingClientRect();
+            const triggerPoint = window.innerHeight / 2; // Screen center
+            
+            // 3. How far has the container top scrolled past the trigger point?
+            let distanceScrolled = triggerPoint - rect.top;
+
+            if (distanceScrolled < 0) distanceScrolled = 0;
+            
+            // 4. Force Stop: If scrolled past the limit, stay at limit
+            if (distanceScrolled > stopLimit) distanceScrolled = stopLimit;
+
+            // 5. Apply Position (Pixels)
+            boy.style.top = distanceScrolled + 'px';
+        }
+
+        // --- ENROLL POPUP ---
+        const modal = document.getElementById('enrollModal');
+        const courseInput = document.getElementById('popup-course-name');
+
+        function openEnrollForm(courseName) { 
+            courseInput.value = courseName; 
+            modal.classList.add('active'); 
+        }
+
+        function closeEnrollForm() { 
+            modal.classList.remove('active'); 
+        }
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeEnrollForm();
+            }
+        });
+
+        document.getElementById('enrollFormPopup').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = this.querySelector('button');
+            const originalText = submitBtn.innerText;
+            submitBtn.innerText = 'Processing...';
+            submitBtn.disabled = true;
+
+            const data = {
+                name: document.getElementById('popup-name').value,
+                phone: document.getElementById('popup-phone').value,
+                college: document.getElementById('popup-college').value,
+                degree: document.getElementById('popup-degree').value,
+                yop: document.getElementById('popup-yop').value,
+                course: document.getElementById('popup-course-name').value
+            };
+
+            try {
+                // In production, update the URL
+                const res = await fetch('http://localhost:3000/api/enroll', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    alert('✅ Enrollment Successful! We will contact you shortly.');
+                    closeEnrollForm();
+                    this.reset();
+                } else {
+                    alert('❌ Submission failed. Please try again.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('❌ Server Error: Ensure Node.js server is running.');
+            } finally {
+                submitBtn.innerText = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // --- BROCHURE POPUP ---
+        const brochureModal = document.getElementById('brochureModal');
+        const brochureCourseName = document.getElementById('brochure-course-name');
+        const brochureHiddenInput = document.getElementById('brochure-hidden-course');
+
+        function openBrochureForm(courseName) {
+            brochureCourseName.innerText = courseName;
+            brochureHiddenInput.value = courseName;
+            brochureModal.classList.add('active');
+        }
+
+        function closeBrochureForm() {
+            brochureModal.classList.remove('active');
+        }
+
+        brochureModal.addEventListener('click', (e) => {
+            if (e.target === brochureModal) {
+                closeBrochureForm();
+            }
+        });
+
+        document.getElementById('brochureForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = this.querySelector('button');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = 'Downloading...';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                alert(`📄 Brochure for ${brochureHiddenInput.value} has been sent to your email!`);
+                closeBrochureForm();
+                this.reset();
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        });
+        
+        window.onload = function() {
+            const hash = window.location.hash.replace('#', '');
+            if(['java', 'python', 'mern', 'data', 'aiml', 'automation'].includes(hash)) showRoadmap(hash);
+        };
+    </script>
+</body>
+</html>

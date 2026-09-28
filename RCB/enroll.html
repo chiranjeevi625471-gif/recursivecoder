@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enroll Now | Recursive Coders</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Page Specific Overrides for Centered Form */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #1e1e2f 0%, #050510 100%);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .enroll-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .enroll-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .enroll-header h2 {
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .enroll-header p {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #a29bfe; /* Secondary Color */
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 10px rgba(108, 92, 231, 0.2);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #666;
+            font-size: 1.5rem;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .close-btn:hover {
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="enroll-container">
+        <a href="index.html" class="close-btn">&times;</a>
+        
+        <div class="enroll-header">
+            <h2>Secure Your Spot</h2>
+            <p>Enroll in <span id="course-name-display" style="color: #6c5ce7; font-weight: 700;">Recursive Coders</span></p>
+        </div>
+
+        <form id="enrollForm">
+            <input type="hidden" id="e-course">
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="e-name" required placeholder="John Doe">
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="e-email" required placeholder="john@example.com">
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="e-phone" required placeholder="+91 98765 43210">
+            </div>
+
+            <div class="form-group">
+                <label>College / Company</label>
+                <input type="text" id="e-college" required placeholder="University Name">
+            </div>
+
+            <div class="form-group">
+                <label>Highest Qualification</label>
+                <select id="e-degree" required>
+                    <option value="" disabled selected>Select Degree</option>
+                    <option value="B.Tech/B.E">B.Tech / B.E</option>
+                    <option value="BCA/MCA">BCA / MCA</option>
+                    <option value="B.Sc/M.Sc">B.Sc / M.Sc</option>
+                    <option value="Diploma">Diploma</option>
+                    <option value="Working Professional">Working Professional</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Year of Passing</label>
+                <input type="number" id="e-yop" required placeholder="2024">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Confirm Enrollment</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Auto-fill Course from URL (e.g. enroll.html?course=python)
+            const params = new URLSearchParams(window.location.search);
+            const courseParam = params.get('course');
+            
+            const displaySpan = document.getElementById('course-name-display');
+            const hiddenInput = document.getElementById('e-course');
+
+            if (courseParam) {
+                // Format: "java-full-stack" -> "JAVA FULL STACK"
+                const formattedName = courseParam.replace(/-/g, ' ').toUpperCase();
+                displaySpan.textContent = formattedName;
+                hiddenInput.value = formattedName;
+            } else {
+                hiddenInput.value = "General Enrollment";
+            }
+
+            // 2. Handle Form Submission
+            document.getElementById('enrollForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const submitBtn = e.target.querySelector('button');
+                const originalText = submitBtn.innerText;
+                submitBtn.innerText = "Processing...";
+                submitBtn.disabled = true;
+
+                // Collect Data
+                const formData = {
+                    name: document.getElementById('e-name').value,
+                    email: document.getElementById('e-email').value,
+                    phone: document.getElementById('e-phone').value,
+                    college: document.getElementById('e-college').value,
+                    degree: document.getElementById('e-degree').value,
+                    yop: document.getElementById('e-yop').value,
+                    course: document.getElementById('e-course').value
+                };
+
+                try {
+                    // Send to Backend
+                    const response = await fetch('http://localhost:3000/api/enroll', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        alert("✅ Enrollment Successful! We will contact you shortly.");
+                        window.location.href = "index.html"; // Redirect to home
+                    } else {
+                        alert("❌ Error: " + (result.error || "Submission failed"));
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert("❌ Connection Error: Is your server running?");
+                } finally {
+                    submitBtn.innerText = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
