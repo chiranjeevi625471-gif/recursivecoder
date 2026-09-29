@@ -185,44 +185,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* =========================================
-       3. TESTIMONIAL SLIDER LOGIC (PAGE BASED)
+       3. TESTIMONIAL MARQUEE
        ========================================= */
     const track = document.getElementById('testimonialTrack');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    
-    if (track && prevBtn && nextBtn) {
-        let currentIndex = 0;
-        
-        function updateSlider() {
-            // Get the width of one "Page" (which is 100% of the viewport)
-            const slideWidth = document.querySelector('.testimonial-viewport').offsetWidth;
-            const offset = -(currentIndex * slideWidth);
-            track.style.transform = `translateX(${offset}px)`;
-        }
+    if (track) {
+        const cards = Array.from(track.querySelectorAll('.testimonial-page .testimonial-card'));
+        const rowCards = [[], []];
 
-        nextBtn.addEventListener('click', () => {
-            const totalPages = document.querySelectorAll('.testimonial-page').length;
-            if (currentIndex < totalPages - 1) {
-                currentIndex++;
-            } else {
-                currentIndex = 0; // Loop back to start
-            }
-            updateSlider();
+        cards.forEach((card, index) => rowCards[index % 2].push(card));
+        track.replaceChildren();
+
+        rowCards.forEach((cardsInRow, index) => {
+            const row = document.createElement('div');
+            const rowTrack = document.createElement('div');
+            const group = document.createElement('div');
+            const duplicateGroup = document.createElement('div');
+
+            row.className = `testimonial-marquee-row${index === 1 ? ' reverse' : ''}`;
+            rowTrack.className = 'testimonial-marquee-track';
+            group.className = 'testimonial-marquee-group';
+            duplicateGroup.className = 'testimonial-marquee-group';
+            duplicateGroup.setAttribute('aria-hidden', 'true');
+
+            cardsInRow.forEach(card => group.append(card));
+            cardsInRow.forEach(card => duplicateGroup.append(card.cloneNode(true)));
+            rowTrack.append(group, duplicateGroup);
+            row.append(rowTrack);
+            track.append(row);
         });
-
-        prevBtn.addEventListener('click', () => {
-            const totalPages = document.querySelectorAll('.testimonial-page').length;
-            if (currentIndex > 0) {
-                currentIndex--;
-            } else {
-                currentIndex = totalPages - 1; // Loop to end
-            }
-            updateSlider();
-        });
-
-        // Recalculate on window resize to ensure alignment
-        window.addEventListener('resize', updateSlider);
     }
 
     /* =========================================
