@@ -175,15 +175,8 @@
             }
 
             // 2. Handle Form Submission
-            document.getElementById('enrollForm').addEventListener('submit', async (e) => {
+            document.getElementById('enrollForm').addEventListener('submit', (e) => {
                 e.preventDefault();
-
-                const submitBtn = e.target.querySelector('button');
-                const originalText = submitBtn.innerText;
-                submitBtn.innerText = "Processing...";
-                submitBtn.disabled = true;
-
-                // Collect Data
                 const formData = {
                     name: document.getElementById('e-name').value,
                     email: document.getElementById('e-email').value,
@@ -193,31 +186,11 @@
                     yop: document.getElementById('e-yop').value,
                     course: document.getElementById('e-course').value
                 };
-
-                try {
-                    // Send to Backend
-                    const response = await fetch('/api/enroll', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(formData)
-                    });
-
-                    const result = await response.json();
-
-                    if (response.ok) {
-                        alert("✅ Enrollment Successful! We will contact you shortly.");
-                        window.location.href = "index.html"; // Redirect to home
-                    } else {
-                        alert("❌ Error: " + (result.error || "Submission failed"));
-                    }
-
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert("❌ Could not reach the enrollment service. Please try again later.");
-                } finally {
-                    submitBtn.innerText = originalText;
-                    submitBtn.disabled = false;
-                }
+                const body = Object.entries(formData)
+                    .map(([label, value]) => `${label}: ${value}`)
+                    .join('\n');
+                alert('Your email app will open with your enrollment request. Send the email to complete it.');
+                window.location.href = `mailto:info@recursivecoders.com?subject=${encodeURIComponent('Course enrollment request')}&body=${encodeURIComponent(body)}`;
             });
         });
     </script>

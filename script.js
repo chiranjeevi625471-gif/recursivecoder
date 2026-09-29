@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const openEmailDraft = (subject, details) => {
+        const body = Object.entries(details)
+            .map(([label, value]) => `${label}: ${value}`)
+            .join('\n');
+        window.location.href = `mailto:info@recursivecoders.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    };
 
     /* =========================================
        1. ROBUST MENU TOGGLE LOGIC
@@ -298,52 +304,27 @@ document.addEventListener('DOMContentLoaded', () => {
        5. DB CONNECTION (DEMO FORM)
        ========================================= */
     const demoForm = document.getElementById('demoForm');
-    
+    const subscribeForm = document.querySelector('.subscribe-form');
+    if (subscribeForm) {
+        subscribeForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            alert('Your email app will open with a subscription request. Send the email to complete it.');
+            openEmailDraft('Newsletter subscription', {
+                Email: subscribeForm.querySelector('input[type="email"]').value
+            });
+        });
+    }
+
     if (demoForm) {
-        demoForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); 
-
-            // Gather Data
-            const formData = {
-                name: document.getElementById('demo-name').value,
-                email: document.getElementById('demo-email').value,
-                phone: document.getElementById('demo-phone').value,
-                course: document.getElementById('demo-course').value,
-                college: "Not Provided (Demo Request)", 
-                degree: "Not Provided (Demo Request)",
-                yop: "2026" 
-            };
-
-            const submitBtn = demoForm.querySelector('button');
-            const originalText = submitBtn.innerText;
-            submitBtn.innerText = "Sending...";
-            submitBtn.disabled = true;
-
-            try {
-                const response = await fetch('/api/enroll', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    alert("✅ Success! We have received your request. Our team will contact you shortly.");
-                    demoForm.reset();
-                } else {
-                    alert("❌ Error: " + (result.error || "Something went wrong."));
-                }
-
-            } catch (error) {
-                console.error("Connection Error:", error);
-                alert("❌ Could not reach the enrollment service. Please try again later.");
-            } finally {
-                submitBtn.innerText = originalText;
-                submitBtn.disabled = false;
-            }
+        demoForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            alert('Your email app will open with your demo request. Send the email to complete it.');
+            openEmailDraft('Free demo request', {
+                Name: document.getElementById('demo-name').value,
+                Email: document.getElementById('demo-email').value,
+                Phone: document.getElementById('demo-phone').value,
+                Course: document.getElementById('demo-course').value
+            });
         });
     }
 });

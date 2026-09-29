@@ -939,8 +939,8 @@
         <div class="modal-container">
             <span class="close-modal-btn" onclick="closeBrochureForm()">&times;</span>
             
-            <h2>Download Course Brochure</h2>
-            <p style="text-align: center; font-size: 0.9rem; margin-bottom: 20px; color: #666;">Enter your details to receive the <span id="brochure-course-name" style="font-weight: bold; color: var(--primary);"></span> syllabus instantly.</p>
+            <h2>Request Course Brochure</h2>
+            <p style="text-align: center; font-size: 0.9rem; margin-bottom: 20px; color: #666;">Email us to request the <span id="brochure-course-name" style="font-weight: bold; color: var(--primary);"></span> syllabus.</p>
             
             <form id="brochureForm">
                 <input type="hidden" id="brochure-hidden-course">
@@ -960,7 +960,7 @@
                     <input type="tel" id="b-phone" required placeholder="+91 98765 43210">
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Download Now <i class="fas fa-download"></i></button>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Email Brochure Request <i class="fas fa-envelope"></i></button>
             </form>
         </div>
     </div>
@@ -1069,14 +1069,8 @@
             }
         });
 
-        document.getElementById('enrollFormPopup').addEventListener('submit', async function(e) {
+        document.getElementById('enrollFormPopup').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const submitBtn = this.querySelector('button');
-            const originalText = submitBtn.innerText;
-            submitBtn.innerText = 'Processing...';
-            submitBtn.disabled = true;
-
             const data = {
                 name: document.getElementById('popup-name').value,
                 phone: document.getElementById('popup-phone').value,
@@ -1085,29 +1079,11 @@
                 yop: document.getElementById('popup-yop').value,
                 course: document.getElementById('popup-course-name').value
             };
-
-            try {
-                // In production, update the URL
-                const res = await fetch('http://localhost:3000/api/enroll', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                if (res.ok) {
-                    alert('✅ Enrollment Successful! We will contact you shortly.');
-                    closeEnrollForm();
-                    this.reset();
-                } else {
-                    alert('❌ Submission failed. Please try again.');
-                }
-            } catch (err) {
-                console.error(err);
-                alert('❌ Server Error: Ensure Node.js server is running.');
-            } finally {
-                submitBtn.innerText = originalText;
-                submitBtn.disabled = false;
-            }
+            const body = Object.entries(data)
+                .map(([label, value]) => `${label}: ${value}`)
+                .join('\n');
+            alert('Your email app will open with your enrollment request. Send the email to complete it.');
+            window.location.href = `mailto:info@recursivecoders.com?subject=${encodeURIComponent('Course enrollment request')}&body=${encodeURIComponent(body)}`;
         });
 
         // --- BROCHURE POPUP ---
@@ -1134,18 +1110,10 @@
         document.getElementById('brochureForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const submitBtn = this.querySelector('button');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = 'Downloading...';
-            submitBtn.disabled = true;
-
-            setTimeout(() => {
-                alert(`📄 Brochure for ${brochureHiddenInput.value} has been sent to your email!`);
-                closeBrochureForm();
-                this.reset();
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }, 1500);
+            const email = document.getElementById('b-email').value;
+            const body = `Course: ${brochureHiddenInput.value}\nName: ${document.getElementById('b-name').value}\nEmail: ${email}\nPhone: ${document.getElementById('b-phone').value}`;
+            alert('Your email app will open with your brochure request. Send the email to complete it.');
+            window.location.href = `mailto:info@recursivecoders.com?subject=${encodeURIComponent('Course brochure request')}&body=${encodeURIComponent(body)}`;
         });
         
         window.onload = function() {
