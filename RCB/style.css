@@ -1733,6 +1733,33 @@ nav {
 }
 
 @media (max-width: 700px) {
+    #testimonials {
+        scroll-margin-top: 88px;
+    }
+
+    #testimonials .section-title {
+        width: 100%;
+        margin-bottom: 24px;
+    }
+
+    #testimonials .section-title span {
+        font-size: 0.75rem;
+        letter-spacing: 1.5px;
+    }
+
+    #testimonials .section-title h2 {
+        font-size: clamp(1.75rem, 7.5vw, 2.25rem);
+        line-height: 1.15;
+    }
+
+    #testimonials .section-title p {
+        max-width: 32rem;
+        margin: 10px auto 0;
+        padding: 0 8px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
     .testimonial-viewport {
         gap: 14px;
         -webkit-mask-image: linear-gradient(to right, transparent, #000 2%, #000 98%, transparent);
