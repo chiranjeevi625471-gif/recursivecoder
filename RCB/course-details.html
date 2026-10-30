@@ -14,7 +14,7 @@
         <div class="container">
             <nav>
                 <a href="index.html" class="logo">
-                     <img src="assets/Recursive Coders.png" alt="" >
+                     <img src="assets/LOGO (3).png" alt="Recursive Coders" >
                 </a>
                 
                 <div class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></div>
@@ -29,10 +29,10 @@
         </div>
     </header>
 
-    <section class="header-banner" style="padding-top: 140px; padding-bottom: 60px; text-align: center; background: radial-gradient(circle at center, rgba(255, 215, 0, 0.15) 0%, transparent 70%);">
+    <section class="header-banner" style="padding-top: 140px; padding-bottom: 60px; text-align: center; background: radial-gradient(circle at center, rgba(0, 0, 0, 0.06) 0%, transparent 70%);">
         <div class="container">
             <span class="badge" id="course-badge" style="margin-bottom: 20px; display: inline-block; color: var(--primary); border: 1px solid var(--primary); padding: 5px 15px; border-radius: 20px;">2026 Syllabus</span>
-            <h1 id="course-title" style="font-size: 2.5rem; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255,215,0,0.3);">Loading...</h1>
+            <h1 id="course-title" style="font-size: 2.5rem; margin-bottom: 20px;">Loading...</h1>
             <p id="course-desc" style="color: var(--text-gray); max-width: 700px; margin: 0 auto 30px auto; font-size: 1.1rem; line-height: 1.6;">
                 Please wait while we fetch the roadmap...
             </p>
@@ -43,18 +43,18 @@
     <section class="container section-padding">
         <div class="roadmap-grid">
             
-            <aside class="course-sidebar" style="background: rgba(255,255,255,0.03); padding: 30px; border-radius: 20px; height: fit-content; border: 1px solid rgba(255,215,0,0.2);">
+            <aside class="course-sidebar" style="background: #f5f5f5; padding: 30px; border-radius: 20px; height: fit-content; border: 1px solid #dddddd;">
                 <div style="margin-bottom: 30px;">
                     <h4 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-info-circle"></i> Quick Info</h4>
-                    <ul style="color: #ccc; line-height: 2;">
-                        <li><i class="fas fa-clock" style="width: 25px;"></i> Duration: <span id="duration" style="color: white; font-weight: 600;">--</span></li>
-                        <li><i class="fas fa-layer-group" style="width: 25px;"></i> Level: <span id="level" style="color: white; font-weight: 600;">--</span></li>
+                    <ul style="color: #555555; line-height: 2;">
+                        <li><i class="fas fa-clock" style="width: 25px;"></i> Duration: <span id="duration" style="color: #000000; font-weight: 600;">--</span></li>
+                        <li><i class="fas fa-layer-group" style="width: 25px;"></i> Level: <span id="level" style="color: #000000; font-weight: 600;">--</span></li>
                         <li><i class="fas fa-certificate" style="width: 25px;"></i> Certification Included</li>
                     </ul>
                 </div>
                 <div>
                     <h4 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-tools"></i> Tech Stack</h4>
-                    <p id="tech-stack" style="color: #ccc; font-size: 0.95rem; line-height: 1.6;">--</p>
+                    <p id="tech-stack" style="color: #555555; font-size: 0.95rem; line-height: 1.6;">--</p>
                 </div>
             </aside>
 
@@ -71,7 +71,7 @@
     </section>
 
     <footer>
-        <div class="container" style="text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; color: var(--text-gray);">
+        <div class="container" style="text-align: center; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 20px; color: var(--text-gray);">
             <p>&copy; 2026 Recursive Coders. All rights reserved.</p>
         </div>
     </footer>
@@ -130,9 +130,9 @@
                             <div class="road-line" style="display: ${isLast ? 'none' : 'block'}; height: 100%;"></div>
                         </div>
                         
-                        <div class="module-card" style="background: var(--bg-card); padding: 25px; border-radius: 15px; width: 100%; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                        <div class="module-card" style="background: var(--bg-card); padding: 25px; border-radius: 15px; width: 100%; border: 1px solid #e5e5e5; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
                             <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600; text-transform: uppercase;">${module.week}</span>
-                            <h3 style="margin: 5px 0 15px 0; color: white;">${module.topic}</h3>
+                            <h3 style="margin: 5px 0 15px 0; color: #000000;">${module.topic}</h3>
                             <ul style="color: var(--text-gray); list-style: disc; margin-left: 20px; line-height: 1.6;">
                                 ${module.details.map(detail => `<li>${detail}</li>`).join('')}
                             </ul>
