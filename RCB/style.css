@@ -2069,9 +2069,7 @@ body {
     position: relative;
     margin-top: 0;
     padding: 30px 0;
-    background: rgba(0, 0, 0, 0.72);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
+    background: #000000;
 }
 
 @keyframes hero-grid-drift {
